@@ -25,19 +25,3 @@ class PlayerCar:
             self.x += self.speed
         pg.event.pump()
 
-
-class EnemyCar:
-
-    def __init__(self, image_way: str) -> None:
-        self.image = pg.image.load(image_way)
-        self.rect = self.image.get_rect()
-        self.x = 200
-        self.speed = 1
-        self.y = 600
-
-    def render(self, screen) -> None:
-        screen.blit(self.image, (self.x,  self.y))
-
-    def move(self) -> None:
-        while True:
-            self.y += self.speed
