@@ -1,43 +1,36 @@
-import pygame as pg
-from actors import PlayerCar
+from scenes import *
+from actors import *
+from config import *
+from utils import view_display
 
 
 def main() -> None:
-    pg.init()
-    pg.font.init()
-    screen = pg.display.set_mode((600, 800))
-    pg.display.set_caption("CarDriver")
-    main_background1 = pg.image.load("Sources\\road_background.png")
-    main_background2 = pg.image.load("Sources\\road_background.png")
-    back_y1 = 0
-    back_y2 = -800
-    screen.blit(main_background1, (0, back_y1))
-    screen.blit(main_background2, (0, back_y2))
-    player_car = PlayerCar("Sources\\enemy.png")
-    score_font = pg.font.SysFont("verdana", 15)
-    score_value = 0
-    speed_road = 4
+    view_display()
+    screen = pg.display.set_mode(SCREEN_SIZE)
+    player_car = PlayerCar("Sources\\player.png")
+    player_car.render(screen)
+    game_scene = GameScene(screen)
+    main_menu_scene = MainMenuScene(screen)
     running = True
+    state = [0, ]
     while running:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if state[0] == 0:
+                    if pg.mouse.get_pos() > (124,240) and pg.mouse.get_pos() < (473, 327):
+                        state[0] = 1
+                    elif pg.mouse.get_pos() > (11, 729) and pg.mouse.get_pos() < (169, 789):
+                        running = False
+            elif event.type == pg.QUIT:
                 running = False
-        player_car.move()
-        back_y1 += speed_road
-        back_y2 += speed_road
-        screen.blit(main_background1, (0, back_y1))
-        screen.blit(main_background2, (0, back_y2))
-        if back_y1 == 800:
-            back_y1 = -800
-        if back_y2 == 800:
-            back_y2 = -800
-        score = score_font.render(
-            f"Score: {int(score_value)}", 1, (255, 255, 0)
-        )
-        screen.blit(score, (0, 0))
-        player_car.render(screen)
+        match state[0]:
+            case 0:
+                main_menu_scene.render_scene()
+            case 1:
+                game_scene.render_scene()
+                player_car.move(state)
+                player_car.render(screen)
         pg.display.update()
-        score_value += 0.02
     pg.quit()
 
 
