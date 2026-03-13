@@ -1,4 +1,7 @@
+import os
 import pygame as pg
+from random import choice
+from config import ENEMY_IMAGES_DIR
 
 
 class PlayerCar:
@@ -27,4 +30,24 @@ class PlayerCar:
         if pressed_key[pg.K_ESCAPE]:
             state[0] = 0
         pg.event.pump()
+
+
+class EnemyCar:
+
+    def __init__(self) -> None:
+        self.image = pg.image.load(self.get_random_image())
+        self._rect = self.image.get_rect()
+        self.x = 0
+        self._speed = choice([1.5, 2.5, 3])
+        self.y = -600
+
+    def get_random_image(self) -> str:
+        enemy_images = os.listdir(ENEMY_IMAGES_DIR)
+        return os.path.join(ENEMY_IMAGES_DIR, choice(enemy_images))
+
+    def render(self, screen) -> None:
+        screen.blit(self.image, (self.x,  self.y))
+
+    def move(self) -> None:
+        self.y += self._speed
 
