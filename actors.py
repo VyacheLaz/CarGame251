@@ -7,26 +7,27 @@ from config import ENEMY_IMAGES_DIR
 class PlayerCar:
 
     def __init__(self, image_way: str) -> None:
-        self.image = pg.image.load(image_way)
-        self._rect = self.image.get_rect()
-        self._x = 200
+        self.image = pg.image.load(image_way).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = 200
+        self.rect.y = 600
+        self.rect.width = 64
+        self.rect.height = 120
         self._speed = 1
-        self._y = 600
 
     def render(self, screen) -> None:
-        screen.blit(self.image, (self._x,  self._y))
+        screen.blit(self.image, (self.rect.x,  self.rect.y))
 
     def move(self, state: list[int]) -> None:
         pressed_key = pg.key.get_pressed()
-        if (pressed_key[pg.K_UP] or pressed_key[pg.K_w]) and self._y > 0:
-            print(self._y)
-            self._y -= self._speed
-        if (pressed_key[pg.K_DOWN] or pressed_key[pg.K_s]) and self._y < 600:
-            self._y += self._speed
-        if (pressed_key[pg.K_LEFT] or pressed_key[pg.K_a]) and self._x > 0:
-            self._x -= self._speed
-        if (pressed_key[pg.K_RIGHT] or pressed_key[pg.K_d]) and self._x < 400:
-            self._x += self._speed
+        if (pressed_key[pg.K_UP] or pressed_key[pg.K_w]) and self.rect.y > 0:
+            self.rect.y -= self._speed
+        if (pressed_key[pg.K_DOWN] or pressed_key[pg.K_s]) and self.rect.y < 660:
+            self.rect.y += self._speed
+        if (pressed_key[pg.K_LEFT] or pressed_key[pg.K_a]) and self.rect.x > 66:
+            self.rect.x -= self._speed
+        if (pressed_key[pg.K_RIGHT] or pressed_key[pg.K_d]) and self.rect.x < 463:
+            self.rect.x += self._speed
         if pressed_key[pg.K_ESCAPE]:
             state[0] = 0
         pg.event.pump()
@@ -35,19 +36,22 @@ class PlayerCar:
 class EnemyCar:
 
     def __init__(self) -> None:
-        self.image = pg.image.load(self.get_random_image())
-        self._rect = self.image.get_rect()
-        self.x = 0
-        self._speed = choice([1.5, 2.5, 3])
-        self.y = -600
+        self.image = pg.image.load(self.get_random_image()).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.y = choice([-600, -500, -650, -550, -800, -750, -800, -900, -100])
+        self.rext_x = 0
+        self.rect.width = 64
+        self._speed = choice([1, 1.5, 2.5, 3, 2, 1.25])
+        self.rect.height = 120
 
-    def get_random_image(self) -> str:
+    @staticmethod
+    def get_random_image() -> str:
         enemy_images = os.listdir(ENEMY_IMAGES_DIR)
         return os.path.join(ENEMY_IMAGES_DIR, choice(enemy_images))
 
     def render(self, screen) -> None:
-        screen.blit(self.image, (self.x,  self.y))
+        screen.blit(self.image, (self.rect.x,  self.rect.y))
 
     def move(self) -> None:
-        self.y += self._speed
+        self.rect.y += self._speed
 
