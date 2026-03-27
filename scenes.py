@@ -45,10 +45,10 @@ class GameScene:
         self.back_y2 += self.speed_road
         self.screen.blit(self.main_background1, (0, self.back_y1))
         self.screen.blit(self.main_background2, (0, self.back_y2))
-        if self.back_y1 == 800:
-            self.back_y1 = -800
-        if self.back_y2 == 800:
-            self.back_y2 = -800
+        if self.back_y1 >= 800:
+            self.back_y1 -= 1600
+        if self.back_y2 >= 800:
+            self.back_y2 -= 1600
         score = self.score_font.render(
             f"Score: {int(self.score_value)}", 1, (255, 255, 0)
         )
