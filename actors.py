@@ -1,16 +1,20 @@
 import os
 import pygame as pg
 from random import choice
-from config import ENEMY_IMAGES_DIR
+from config import ENEMY_IMAGES_DIR, PLAYER_SKINS_DIR
+from config_manager import player_config
 
 
 class PlayerCar:
 
-    def __init__(self, image_way: str) -> None:
-        self.image = pg.image.load(image_way).convert_alpha()
+    def __init__(self) -> None:
+        self.image = pg.image.load(os.path.join(
+            PLAYER_SKINS_DIR,
+            f'{player_config.config["playerSkin"]}.png'
+        )).convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.x = 200
-        self.rect.y = 600
+        self.rect.x = 260
+        self.rect.y = 650
         self.rect.width = 64
         self.rect.height = 120
         self._speed = 1
