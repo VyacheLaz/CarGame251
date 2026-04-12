@@ -1,7 +1,7 @@
 import os
 import pygame as pg
 from random import choice
-from config import ENEMY_IMAGES_DIR, PLAYER_SKINS_DIR
+from config import ENEMY_IMAGES_DIR, PLAYER_SKINS_DIR, INTERFACE_STATE, MAIN_MENU_STATE
 from config_manager import player_config
 
 
@@ -22,7 +22,7 @@ class PlayerCar:
     def render(self, screen) -> None:
         screen.blit(self.image, (self.rect.x,  self.rect.y))
 
-    def move(self, state: list[int]) -> None:
+    def move(self) -> None:
         pressed_key = pg.key.get_pressed()
         if (pressed_key[pg.K_UP] or pressed_key[pg.K_w]) and self.rect.y > 0:
             self.rect.y -= self._speed
@@ -33,7 +33,7 @@ class PlayerCar:
         if (pressed_key[pg.K_RIGHT] or pressed_key[pg.K_d]) and self.rect.x < 463:
             self.rect.x += self._speed
         if pressed_key[pg.K_ESCAPE]:
-            state[0] = 0
+            INTERFACE_STATE[0] = MAIN_MENU_STATE
         pg.event.pump()
 
 

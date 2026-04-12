@@ -2,7 +2,7 @@ import os
 import pygame as pg
 from actors import EnemyCar
 from config_manager import player_config
-from config import INTERFACE_IMAGES_DIR
+from config import *
 from datetime import datetime
 
 
@@ -58,7 +58,7 @@ class GameScene:
                 enemy_car.move()
                 enemy_car.render(self.screen)
 
-    def render_scene(self, player, state: list[int]) -> None:
+    def render_scene(self, player) -> None:
         '''
             Render main game scene
         '''
@@ -75,7 +75,7 @@ class GameScene:
         )
         self.move_enemy_cars(player)
         if self.game_over:
-            state[0] = -1
+            INTERFACE_STATE[0] = GAME_OVER_STATE
             return
         self.screen.blit(score, (0, 0))
         self.score_value += 0.02
@@ -84,13 +84,36 @@ class GameScene:
 class MainMenuScene:
     def __init__(self, screen) -> None:
         self.screen = screen
-        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'menu.png'))
+        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Menu.png')).convert_alpha()
+        self.start_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Start.png')).convert_alpha()
+        self.start_button_rect = self.start_button.get_rect()
+        self.start_button_rect.x = 200
+        self.start_button_rect.y = 250
+        self.garage_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Garage.png')).convert_alpha()
+        self.garage_button_rect = self.garage_button.get_rect()
+        self.garage_button_rect.x = 200
+        self.garage_button_rect.y = 380
+        self.scores_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Scores.png')).convert_alpha()
+        self.scores_button_rect = self.scores_button.get_rect()
+        self.scores_button_rect.x = 200
+        self.scores_button_rect.y = 510
+        self.quit_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Quit.png')).convert_alpha()
+        self.quit_button_rect = self.quit_button.get_rect()
+        self.quit_button_rect.x = 20
+        self.quit_button_rect.y = 700
 
     def render_scene(self) -> None:
         self.screen.blit(self._background, (0, 0))
+        self.screen.blit(self.start_button, (200, 250))
+        self.screen.blit(self.garage_button, (200, 380))
+        self.screen.blit(self.scores_button, (200, 510))
+        self.screen.blit(self.quit_button, (20, 700))
 
-    def action(self) -> None:
-        pass
+    def action(self, mouse_pos: tuple[int]) -> None:
+        if self.start_button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = GAME_STATE
+        elif self.quit_button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = QUIT_STATE
 
 
 class GameOverScene:
@@ -109,14 +132,3 @@ class GarageScene:
 
     def render_scene(self) -> None:
         self.screen.blit(self._background, (0, 0))
-
-
-class SettingsScene:
-    def __init__(self, screen) -> None:
-        self.screen = screen
-        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'settings.png'))
-
-    def render_scene(self) -> None:
-        self.screen.blit(self._background, (0, 0))
-
-
