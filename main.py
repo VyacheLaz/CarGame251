@@ -38,6 +38,7 @@ def main() -> None:
             elif event.type == pg.QUIT:
                 running = False
         if INTERFACE_STATE[0] == MAIN_MENU_STATE:
+            main_menu_scene.mouse_hover(pg.mouse.get_pos())
             main_menu_scene.render_scene()
         elif INTERFACE_STATE[0] == GAME_STATE:
             game_scene.render_scene(player_car)

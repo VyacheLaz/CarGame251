@@ -4,6 +4,7 @@ from actors import EnemyCar
 from config_manager import player_config
 from config import *
 from datetime import datetime
+from button import Button
 
 
 class GameScene:
@@ -16,7 +17,7 @@ class GameScene:
         self.main_background2 = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'road_background.png'))
         self.back_y1 = 0
         self.back_y2 = -800
-        self.score_font = pg.font.SysFont("verdana", 15)
+        self.score_font = pg.font.Font("Assets\\pixelFont.ttf", 36)
         self.score_value = 0
         self.speed_road = 4
         self._enemy_count = 6
@@ -71,7 +72,7 @@ class GameScene:
         if self.back_y2 >= 800:
             self.back_y2 -= 1600
         score = self.score_font.render(
-            f"Score: {int(self.score_value)}", 1, (255, 255, 0)
+            f"Score: {int(self.score_value)}", 1, (0, 0, 0)
         )
         self.move_enemy_cars(player)
         if self.game_over:
@@ -85,35 +86,29 @@ class MainMenuScene:
     def __init__(self, screen) -> None:
         self.screen = screen
         self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Menu.png')).convert_alpha()
-        self.start_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Start.png')).convert_alpha()
-        self.start_button_rect = self.start_button.get_rect()
-        self.start_button_rect.x = 200
-        self.start_button_rect.y = 250
-        self.garage_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Garage.png')).convert_alpha()
-        self.garage_button_rect = self.garage_button.get_rect()
-        self.garage_button_rect.x = 200
-        self.garage_button_rect.y = 380
-        self.scores_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Scores.png')).convert_alpha()
-        self.scores_button_rect = self.scores_button.get_rect()
-        self.scores_button_rect.x = 200
-        self.scores_button_rect.y = 510
-        self.quit_button = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu\\Quit.png')).convert_alpha()
-        self.quit_button_rect = self.quit_button.get_rect()
-        self.quit_button_rect.x = 20
-        self.quit_button_rect.y = 700
+        self.start_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu'), 'Start', (200, 250))
+        self.garage_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu'), 'Garage', (200, 380))
+        self.scores_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu'), 'Scores', (200, 510))
+        self.quit_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'MainMenu'), 'Quit', (20, 700))
+
 
     def render_scene(self) -> None:
         self.screen.blit(self._background, (0, 0))
-        self.screen.blit(self.start_button, (200, 250))
-        self.screen.blit(self.garage_button, (200, 380))
-        self.screen.blit(self.scores_button, (200, 510))
-        self.screen.blit(self.quit_button, (20, 700))
+        self.start_button.draw(self.screen)
+        self.garage_button.draw(self.screen)
+        self.scores_button.draw(self.screen)
+        self.quit_button.draw(self.screen)
 
     def action(self, mouse_pos: tuple[int]) -> None:
-        if self.start_button_rect.collidepoint(mouse_pos):
+        if self.start_button.button_rect.collidepoint(mouse_pos):
             INTERFACE_STATE[0] = GAME_STATE
-        elif self.quit_button_rect.collidepoint(mouse_pos):
+        elif self.quit_button.button_rect.collidepoint(mouse_pos):
             INTERFACE_STATE[0] = QUIT_STATE
+    
+    def mouse_hover(self, mouse_pos: tuple[int]) -> None:
+        if self.start_button.button_rect.collidepoint(mouse_pos):
+            print('is_her')
+            self.start_button.update_state()
 
 
 class GameOverScene:
