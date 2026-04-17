@@ -107,8 +107,18 @@ class MainMenuScene:
     
     def mouse_hover(self, mouse_pos: tuple[int]) -> None:
         if self.start_button.button_rect.collidepoint(mouse_pos):
-            print('is_her')
-            self.start_button.update_state()
+            self.start_button.update_state(True)
+        elif self.garage_button.button_rect.collidepoint(mouse_pos):
+            self.garage_button.update_state(True)
+        elif self.scores_button.button_rect.collidepoint(mouse_pos):
+            self.scores_button.update_state(True)
+        elif self.quit_button.button_rect.collidepoint(mouse_pos):
+            self.quit_button.update_state(True)
+        else: 
+            self.start_button.update_state(False)
+            self.garage_button.update_state(False)
+            self.scores_button.update_state(False)
+            self.quit_button.update_state(False)
 
 
 class GameOverScene:
