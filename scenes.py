@@ -4,7 +4,7 @@ from actors import EnemyCar
 from config_manager import player_config
 from config import *
 from datetime import datetime
-from button import Button
+from button import Button, RadioButton
 
 
 class GameScene:
@@ -104,6 +104,8 @@ class MainMenuScene:
             INTERFACE_STATE[0] = GAME_STATE
         elif self.quit_button.button_rect.collidepoint(mouse_pos):
             INTERFACE_STATE[0] = QUIT_STATE
+        elif self.garage_button.button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = GARAGE_STATE
     
     def mouse_hover(self, mouse_pos: tuple[int]) -> None:
         if self.start_button.button_rect.collidepoint(mouse_pos):
@@ -124,16 +126,100 @@ class MainMenuScene:
 class GameOverScene:
     def __init__(self, screen) -> None:
         self.screen = screen
-        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'GameOver.png'))
+        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'GameOver', 'GameOver_scene.png'))
+        self.again_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'GameOver'), 'Again', (200, 600))
+        self.back_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'GameOver'), 'Back', (20, 720))
+        self.score_font = pg.font.Font("Assets\\pixelFont.ttf", 26)
+        self.score_font = self.score_font.render(f'Your score: {player_config.config["lastScore"]}', 1, (0, 0, 0))
 
     def render_scene(self) -> None:
         self.screen.blit(self._background, (0, 0))
+        self.screen.blit(self.score_font, (400, 700))
+        self.again_button.draw(self.screen)
+        self.back_button.draw(self.screen)
+
+    def mouse_hover(self, mouse_pos: tuple[int]) -> None:
+        if self.again_button.button_rect.collidepoint(mouse_pos):
+            self.again_button.update_state(True)
+        elif self.back_button.button_rect.collidepoint(mouse_pos):
+            self.back_button.update_state(True)
+        else:
+            self.again_button.update_state(False)
+            self.back_button.update_state(False)
+
+    def action(self, mouse_pos: tuple[int]) -> None:
+        if self.again_button.button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = GAME_STATE
+        elif self.back_button.button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = MAIN_MENU_STATE
+
 
 
 class GarageScene:
     def __init__(self, screen) -> None:
         self.screen = screen
-        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'garage.png'))
+        self._background = pg.image.load(os.path.join(INTERFACE_IMAGES_DIR, 'Garage', 'garage_scene.png'))
+        self.default_car = RadioButton(os.path.join(PLAYER_SKINS_DIR, 'default.png'), (80, 80))
+        self.blue_sky_car = RadioButton(os.path.join(PLAYER_SKINS_DIR, 'blueSky.png'), (300, 80))
+        self.green_peace_car = RadioButton(os.path.join(PLAYER_SKINS_DIR, 'greenpeace.png'), (80, 400))
+        self.purple_podonok_car = RadioButton(os.path.join(PLAYER_SKINS_DIR, 'purplePodonok.png'), (300, 400))
+        self.back_button = Button(os.path.join(INTERFACE_IMAGES_DIR, 'Garage'), 'Back', (20, 720))
+        self.get_current_skin()
+
+
 
     def render_scene(self) -> None:
         self.screen.blit(self._background, (0, 0))
+        self.default_car.draw(self.screen)
+        self.blue_sky_car.draw(self.screen)
+        self.green_peace_car.draw(self.screen)
+        self.purple_podonok_car.draw(self.screen)
+        self.back_button.draw(self.screen)
+    
+
+    def get_current_skin(self) -> None:
+        current_skin = player_config.config['playerSkin']
+        if current_skin == 'purplePodonok':
+            self.purple_podonok_car.is_checked = True
+        elif current_skin == 'blueSky':
+            self.blue_sky_car.is_checked = True
+        elif current_skin == 'greenpeace':
+            self.green_peace_car.is_checked = True
+        else:
+            self.default_car.is_checked = True
+    
+    def mouse_hover(self, mouse_pos: tuple[int]) -> None:
+        if self.back_button.button_rect.collidepoint(mouse_pos):
+            self.back_button.update_state(True)
+        else:
+            self.back_button.update_state(False)
+    
+
+    def action(self, mouse_pos: tuple[int]) -> None:
+        if self.default_car.asset_rect.collidepoint(mouse_pos):
+            self.default_car.is_checked = True
+            self.blue_sky_car.is_checked = False
+            self.green_peace_car.is_checked = False
+            self.purple_podonok_car.is_checked = False
+            player_config.change_setting('playerSkin', 'default')
+        elif self.blue_sky_car.asset_rect.collidepoint(mouse_pos):
+            self.blue_sky_car.is_checked = True
+            self.default_car.is_checked = False
+            self.green_peace_car.is_checked = False
+            self.purple_podonok_car.is_checked = False
+            player_config.change_setting('playerSkin', 'blueSky')
+        elif self.green_peace_car.asset_rect.collidepoint(mouse_pos):
+            self.green_peace_car.is_checked = True
+            self.blue_sky_car.is_checked = False
+            self.default_car.is_checked = False
+            self.purple_podonok_car.is_checked = False
+            player_config.change_setting('playerSkin', 'greenpeace')
+        elif self.purple_podonok_car.asset_rect.collidepoint(mouse_pos):
+            self.purple_podonok_car.is_checked = True
+            self.green_peace_car.is_checked = False
+            self.blue_sky_car.is_checked = False
+            self.default_car.is_checked = False
+            player_config.change_setting('playerSkin', 'purplePodonok')
+        elif self.back_button.button_rect.collidepoint(mouse_pos):
+            INTERFACE_STATE[0] = MAIN_MENU_STATE
+    
